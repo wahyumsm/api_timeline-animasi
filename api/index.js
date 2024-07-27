@@ -6,12 +6,6 @@ const port = process.env.PORT || 5000;
 
 app.use(express.json());
 
-// LIHAT DATA TIMELINE
-const timeout = (ms) =>
-  new Promise((_, reject) =>
-    setTimeout(() => reject(new Error("Timeout")), ms)
-  );
-
 app.get("/lihatdatatimeline", async (req, res) => {
   try {
     const result = await Promise.race([
