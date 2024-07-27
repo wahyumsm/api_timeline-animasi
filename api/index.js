@@ -2,21 +2,19 @@ const express = require("express");
 const client = require("./koneksi");
 const app = express();
 
-const port = process.env.PORT || 5000;
+const port = 5000;
 
 app.use(express.json());
 
-app.get("/lihatdatatimeline", async (req, res) => {
-  try {
-    const result = await Promise.race([
-      client.query("SELECT * FROM timeline"),
-      timeout(5000), // Timeout setelah 5 detik
-    ]);
-    res.status(200).json(result.rows);
-  } catch (err) {
-    console.log("Error executing query:", err);
-    res.status(500).json({ message: "Internal server error" });
-  }
+app.get("/lihatdatatimeline", (req, res) => {
+  client.query("SELECT * FROM timeline", (err, result) => {
+    if (err) {
+      console.log("error di eksekusi:", err);
+      res.status(500).json({ message: "internal server error" });
+    } else {
+      res.status(200).json(result.rows);
+    }
+  });
 });
 
 // TAMBAH DATA TIMELINE
