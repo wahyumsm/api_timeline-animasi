@@ -7,9 +7,17 @@ const port = process.env.PORT || 5000;
 app.use(express.json());
 
 // LIHAT DATA TIMELINE
+const timeout = (ms) =>
+  new Promise((_, reject) =>
+    setTimeout(() => reject(new Error("Timeout")), ms)
+  );
+
 app.get("/lihatdatatimeline", async (req, res) => {
   try {
-    const result = await client.query("SELECT * FROM timeline");
+    const result = await Promise.race([
+      client.query("SELECT * FROM timeline"),
+      timeout(5000), // Timeout setelah 5 detik
+    ]);
     res.status(200).json(result.rows);
   } catch (err) {
     console.log("Error executing query:", err);
